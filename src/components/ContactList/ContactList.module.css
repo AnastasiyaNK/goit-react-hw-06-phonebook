@@ -1,0 +1,25 @@
+.contactItem {
+  margin-bottom: 18px;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
+.deleteBtn {
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  padding: 4px 4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  margin-left: 20px;
+  width: 45px;
+  color: rosybrown;
+}
+.deleteBtn:hover,
+.deleteBtn:focus,
+.deleteBtn:active {
+  background-color: lightblue;
+}
+.svgHeart {
+  color: rosybrown;
+  margin-right: 8px;
+}
