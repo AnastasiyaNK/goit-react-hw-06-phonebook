@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import css from './App.module.css';
 import { ContactList } from './ContactList/ContactList';
 import { nanoid } from 'nanoid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addContact,
+  deleteContact,
+  setfilter,
+  toggleFavoriteContact,
+} from 'redux/phoneBookSlice';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const stringifiedContacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(stringifiedContacts) ?? [];
-    return parsedContacts;
-  });
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const stringifiedContacts = JSON.stringify(contacts);
-    localStorage.setItem('contacts', stringifiedContacts);
-  }, [contacts]);
+  const contacts = useSelector(state => state.phoneBook.contacts);
+  const filter = useSelector(state => state.phoneBook.filter);
+  const dispatch = useDispatch();
 
   const handleAddContact = formData => {
     const isInContact = contacts.some(
@@ -34,29 +33,18 @@ export const App = () => {
       id: nanoid(),
       favourite: false,
     };
-    setContacts(prevState => [...prevState, newContact]);
+    dispatch(addContact(newContact));
   };
 
   const handleDeleteContact = contactId => {
-    setContacts(prevState =>
-      prevState.filter(contact => contact.id !== contactId)
-    );
+    dispatch(deleteContact(contactId));
   };
 
   const handleInputChange = event => {
-    setFilter(event.target.value);
+    dispatch(setfilter(event.target.value));
   };
   const toggleFavorite = contactId => {
-    // [{id: 1, favourite: false}]
-
-    setContacts(
-      contacts.map(contact => {
-        if (contact.id === contactId) {
-          return { ...contact, favourite: !contact.favourite };
-        }
-        return contact;
-      })
-    );
+    dispatch(toggleFavoriteContact(contactId));
   };
 
   const getVisibleContacts = () => {
@@ -66,6 +54,9 @@ export const App = () => {
   };
 
   const filteredContactsByName = getVisibleContacts();
+  const sortedFilteredContacts = [...filteredContactsByName].sort(
+    (a, b) => b.favourite - a.favourite
+  );
 
   return (
     <div className={css.phoneBook}>
@@ -74,7 +65,7 @@ export const App = () => {
       <p>Find contacts by name</p>
       <Filter filter={filter} handleInputChange={handleInputChange} />
       <ContactList
-        contacts={filteredContactsByName}
+        contacts={sortedFilteredContacts}
         handleDeleteContact={handleDeleteContact}
         toggleFavorite={toggleFavorite}
       />
