@@ -61,8 +61,8 @@ export const App = () => {
   return (
     <div className={css.phoneBook}>
       <ContactForm handleAddContact={handleAddContact} />
-      <h2>Contacts</h2>
-      <p>Find contacts by name</p>
+      <h2 className={css.contactsTitle}>Contacts</h2>
+      <p className={css.contactsText}>Find contacts by name</p>
       <Filter filter={filter} handleInputChange={handleInputChange} />
       <ContactList
         contacts={sortedFilteredContacts}
