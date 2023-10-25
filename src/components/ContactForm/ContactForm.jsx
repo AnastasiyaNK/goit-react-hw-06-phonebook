@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import css from './ContactForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from 'redux/selectors';
+import { nanoid } from 'nanoid';
+import { addContact } from 'redux/phoneBookSlice';
 
-export const ContactForm = ({ handleAddContact }) => {
+export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const contacts = useSelector(selectContacts);
+  const dispatch = useDispatch();
 
   const handleInputChange = event => {
     switch (event.target.name) {
@@ -22,7 +29,21 @@ export const ContactForm = ({ handleAddContact }) => {
 
   const handleFormSubmit = event => {
     event.preventDefault();
-    handleAddContact({ name, number });
+    const isInContact = contacts.some(
+      contact => contact.name.toLowerCase() === name
+    );
+
+    if (isInContact) {
+      return alert(`${name} is already in contacts`);
+    }
+    const newContact = {
+      name,
+      number,
+      id: nanoid(),
+      favourite: false,
+    };
+    dispatch(addContact(newContact));
+
     setName('');
     setNumber('');
   };
